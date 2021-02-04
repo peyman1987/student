@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: student
+  version: '1.0'
+  description: ''
+servers:
+  - url: 'http://localhost:8081'
+paths:
+  '/students/{studentId}':
+    parameters:
+      - schema:
+          type: string
+        name: studentId
+        in: path
+        required: true
+    get:
+      summary: Get Student Info by Student ID
+      tags: []
+      responses:
+        '200':
+          description: Student Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+              examples:
+                Get Student Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+        '201':
+          description: Created
+        '404':
+          description: Student Not Found
+      operationId: get-students-studentId
+      description: Retrieve the information of the student with the matching student ID.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: firstNmae
+        - schema:
+            type: string
+          in: query
+          name: lastName
+        - schema:
+            type: boolean
+          in: query
+          name: active
+        - schema: {}
+          in: query
+          name: address
+        - schema:
+            type: array
+          in: query
+          name: languages
+    patch:
+      summary: Update Student Information
+      operationId: patch-students-studentId
+      responses:
+        '200':
+          description: Student Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+              examples:
+                Updated Student Rebecca Baker:
+                  value:
+                    id: 13
+                    firstName: Rebecca
+                    lastName: Baker
+                    email: rebecca@gmail.com
+                    dateOfBirth: '1985-10-02'
+                    emailVerified: false
+                    createDate: '2019-08-24'
+        '404':
+          description: Student Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the infromation of an existing Student.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: 'If a new email is given, the Student''s email verified property will be set to false.'
+                dateOfBirth:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch Student properties to update.
+    put:
+      summary: ''
+      operationId: put-students-studentId
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Student:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          id: 0
+          firstName: string
+          lastName: string
+          active: true
+          address:
+            street: string
+            city: string
+            state: string
+            zip: string
+            country: string
+          languages:
+            - {}
+          company: string
+      properties:
+        id:
+          type: number
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        active:
+          type: boolean
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              minLength: 1
+            city:
+              type: string
+              minLength: 1
+            state:
+              type: string
+              minLength: 1
+            zip:
+              type: string
+              minLength: 1
+            country:
+              type: string
+              minLength: 1
+          required:
+            - street
+            - city
+            - state
+            - zip
+            - country
+        languages:
+          type: array
+          items:
+            type: object
+        company:
+          type: string
+          minLength: 1
+      required:
+        - firstName
+        - lastName
+  securitySchemes:
+    API Key - 1:
+      name: API Key
+      type: apiKey
+      in: query
